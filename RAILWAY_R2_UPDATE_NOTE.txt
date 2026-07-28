@@ -1,0 +1,31 @@
+EASYFISH BACKEND - RAILWAY POSTGRESQL + CLOUDFLARE R2 UPDATE
+
+Updated only backend deployment/storage configuration.
+Frontend source, frontend environment files, frontend links, builds, UI, and business logic were not changed.
+
+1. Removed the hard-coded Neon PostgreSQL URL, username, and password.
+2. application.properties now reads Railway database values from environment variables.
+3. Replaced AWS-named image configuration with Cloudflare R2 configuration.
+4. Added Cloudflare R2 endpoint override and path-style support.
+5. Product, category, and banner uploads continue using the existing upload APIs.
+6. Image URLs stored in PostgreSQL now use CLOUDFLARE_R2_PUBLIC_URL.
+7. Image deletion now recognizes configured R2 public URLs/endpoints.
+8. Removed the unused /api/s3/** security path.
+9. Existing frontend CORS links were kept; the old Render backend URL was removed from CORS because a backend URL is not a browser origin that needs access.
+10. Razorpay URL/webhook configuration is intentionally left for after Railway generates the public backend HTTPS domain.
+
+IMPORTANT RAILWAY VARIABLES
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+JWT_SECRET=<long-random-secret>
+
+IMPORTANT CLOUDFLARE R2 VARIABLES
+CLOUDFLARE_R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+CLOUDFLARE_R2_REGION=auto
+CLOUDFLARE_R2_BUCKET=<bucket-name>
+CLOUDFLARE_R2_PUBLIC_URL=<public-domain-or-r2-dev-url>
+CLOUDFLARE_R2_ACCESS_KEY_ID=<r2-access-key>
+CLOUDFLARE_R2_SECRET_ACCESS_KEY=<r2-secret-key>
+
+After deployment succeeds, generate the Railway public domain, then update Razorpay webhook/callback settings and frontend backend API URLs separately.

@@ -1,0 +1,29 @@
+EasyFish Google Login Update
+
+What changed:
+- Store login now uses Continue with Google instead of phone/direct login.
+- Frontend uses Google Identity Services and sends the Google credential to backend.
+- Backend verifies Google ID token using GOOGLE_CLIENT_ID.
+- User account stores: googleId, name, email, profilePicture.
+- Existing phone column is kept as the technical user id for old order/review table relationships.
+
+Required backend environment variables:
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+
+Note: The current backend verification uses GOOGLE_CLIENT_ID. Keep GOOGLE_CLIENT_SECRET only on backend for future OAuth callback use. Never put secret in frontend.
+
+Required frontend environment variable:
+REACT_APP_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+
+Production Google Cloud OAuth settings:
+Authorized JavaScript origin:
+https://easyfish.in
+
+Authorized redirect URI:
+https://api.easyfish.in/auth/google/callback
+
+Recommended RDS SQL before deployment if old phone-user test data should be cleared:
+TRUNCATE TABLE reviews, order_items, orders, delivery_addresses, users RESTART IDENTITY CASCADE;
+
+If you want to preserve old order data, do not truncate. Hibernate ddl-auto=update will add the new user columns automatically.
